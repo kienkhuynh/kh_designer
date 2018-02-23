@@ -1,0 +1,134 @@
+/* style.css
+ * This file provides css styles.
+ */
+a {
+	color: #595959;
+}
+a:hover {
+	font-weight: bold;
+	color:darkred;
+	text-decoration:none;
+}
+.black-bar-container {
+	overflow: auto;
+	font-family: 'Helvetica Neue', sans-serif;
+	font-size: 14px;
+	background: #595959;
+	color: white;
+	font-weight: bold;
+	float: left;
+	margin: auto;
+	width: 100%;
+	line-height:40px;
+	height:40px;
+	text-align:center
+}
+
+.khmenu {
+	border-bottom: 2px solid #595959;
+    border-bottom-left-radius: 90px;
+    color: #595959;
+}
+
+.khmenu .icon {
+	position: absolute;
+	top: 0;
+	left: 0;
+	font-size: 40px;
+	display:none;
+}
+.khmenu a {
+	font-size: 14px;
+	font-weight:bold;
+	padding:0px 20px 0px 20px;
+}
+
+.khmenu .close {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    font-size: 36px;
+    margin-left: 50px;
+    display:none
+}
+.rightsection {
+	position: absolute;
+	right: 10px;
+}
+.rightsection a {
+	padding-top: 10px;
+	line-height: 14px;
+	font-size:12px;
+}
+@media screen and (max-width: 600px) {
+  .khmenu a { display: none;}
+  .khmenu a.icon {
+    float: left;
+    display: block;
+  }
+  /*.khmenu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }*/
+  
+}
+
+@media screen and (max-width: 600px) {
+  .khmenu.responsive {
+    border:none;
+  }
+  .khmenu.responsive .submenu {
+	height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    transition: 1s;
+    padding-top: 60px;
+    border-right: 1px solid #595959;
+    background-color: white
+  }
+  .khmenu.responsive a.icon {
+    display: none;
+  }
+  .khmenu.responsive a.nav_item {
+	display:block;
+  }
+  .khmenu.responsive a.close {
+    display:block;
+    color: gray;
+  }
+}
+
+.container .contentPane {
+	padding-top: 50px;
+	display: none;
+}
+.container .contentPane.home {
+	font-size: 50px;
+    font-family: fantasy;
+    color: #212529;
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+    padding: 20% 0 20% 0;
+}
+
+.container .contentPane.visible {
+	display:block;
+}
+
+.container .contentPane.loading {
+    background: url(/images/loading.gif) no-repeat 50% 35%;
+    width: 100%;
+    height: 100%;
+}

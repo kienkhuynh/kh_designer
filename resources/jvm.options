@@ -1,0 +1,27 @@
+# WebSphere Application Server Liberty Profile
+# This file contains options that are passed directly to the JVM on startup
+# See the InfoCenter for full documentation
+# Uncomment the following line to set the maximum heap size to 1024m
+-Xmx496m
+
+# Uncomment the following line to set a system property
+#-Dcom.ibm.example.system.property=ExampleValue
+
+# Uncomment the following line to enable verbose output for class loading
+#-verbose:class
+#-Dhttps.protocols=TLSv1.2
+#-Djavax.net.debug=ssl,handshake
+
+#DATABASE 
+-Dschema=public
+-DdbUser=kien
+-DdbPassword=kien
+-DdatabaseUrl=jdbc:postgresql://localhost:5432/kien
+-Ddriver=org.postgresql.Driver
+
+#TIMESERIES DATABASE
+-DmonitorServer=9.21.104.42
+-DmonitorPort=2003
+
+#SECURITY
+-Dsalt=

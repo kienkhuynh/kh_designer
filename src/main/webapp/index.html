@@ -1,0 +1,72 @@
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>𝓚𝓗 𝓓𝓮𝓼𝓲𝓰𝓷𝓮𝓻</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="./js/utils/dom_utils.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+	<div class="black-bar-container">
+		<div class="black-bar-content"> 𝓚𝓗 𝓓𝓮𝓼𝓲𝓰𝓷𝓮𝓻
+		</div>
+	</div>
+	</div>
+	<nav id="topnav" class="navbar navbar-expand-md  khheader">
+		<div id="khMenu" class="khmenu">
+			<div id="subMenu" class="submenu">
+				<!-- <form class="form-inline my-2 my-lg-0">
+					<input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+				</form> -->
+			 	<a href="javascript:void(0)" class="close" onclick="respond()">&times;</a>
+				<a href="#home" class="nav_item">Home</a>
+				<a href="#women" class="nav_item">Women</a>
+				<a href="#men" class="nav_item">Men</a> 
+				<a href="#kids" class="nav_item">Kids</a>
+				
+			</div>
+			<a href="javascript:void(0);" class="icon" onclick="respond()">&#9776;</a>
+		</div>
+		<div class="rightsection">
+			<a href="#signin" class="signin">Sign in</a> |  
+			<a href="#shoppingcard" class="shoppingcard">
+				<img src="https://emojipedia-us.s3.amazonaws.com/thumbs/160/apple/118/shopping-bags_1f6cd.png" srcset="https://emojipedia-us.s3.amazonaws.com/thumbs/320/apple/118/shopping-bags_1f6cd.png 2x" alt="Shopping Bags on Apple iOS 11.2"  width="30" height="30">	
+			</a>
+		</div>
+	</nav>
+	<sidenav>
+	
+	</sidenav>
+	<div class="container">
+		<div id="home" class="contentPane home" style="display:block">WELCOME TO 𝓚𝓗 𝓓𝓮𝓼𝓲𝓰𝓷𝓮𝓻!</div>
+		<div id="women" class="contentPane">Women clothing</div>
+		<div id="men" class="contentPane">Men clothing</div>
+		<div id="kids" class="contentPane">Kids clothing</div>
+		<div id="signin" class="contentPane">signin</div>
+		<div id="shoppingcard" class="contentPane">shoppingcard</div>
+		<div id="loading" class="contentPane loading"></div>
+	</div>
+</body>
+
+<script>
+	dojoConfig = {
+		isDebug: true,
+		baseUrl: "./js",
+		packages: [{
+	        name: "utils",
+	        location: "/js/utils"
+	    }]
+	};
+</script>
+<script src="http://ajax.googleapis.com/ajax/libs/dojo/1.13.0/dojo/dojo.js"></script>
+<script>
+require(["utils/hash_manager"], 
+	function(HashMgr) {
+		HashMgr.instance().startup();
+	});
+</script>
+</html>
