@@ -2,13 +2,9 @@ package kh.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import java.util.List;
 
-/**
- * 
- * [{"itemId":1,"name":"T-shirt","searchKeywords":"|men|t-shirt|","skuCpu":"12345_23445"},{"itemId":2,"name":"T-shirt","searchKeywords":
- * "|woman|women|t-shirt|","skuCpu":"12345_23446"},
- * {"itemId":3,"name":"T-shirt","searchKeywords":"|kids|kid|t-shirt|","skuCpu":"12345_23447"}]
- */
+
 /**
  * The persistent class for the item database table.
  * 
@@ -32,6 +28,10 @@ public class Item implements Serializable {
 
 	@Column(name="sku_cpu", nullable=false, length=32)
 	private String skuCpu;
+
+	//bi-directional many-to-one association to Inventory
+	@OneToMany(mappedBy="item", fetch=FetchType.EAGER)
+	private List<Inventory> inventories;
 
 	public Item() {
 	}
@@ -66,6 +66,28 @@ public class Item implements Serializable {
 
 	public void setSkuCpu(String skuCpu) {
 		this.skuCpu = skuCpu;
+	}
+
+	public List<Inventory> getInventories() {
+		return this.inventories;
+	}
+
+	public void setInventories(List<Inventory> inventories) {
+		this.inventories = inventories;
+	}
+
+	public Inventory addInventory(Inventory inventory) {
+		getInventories().add(inventory);
+		inventory.setItem(this);
+
+		return inventory;
+	}
+
+	public Inventory removeInventory(Inventory inventory) {
+		getInventories().remove(inventory);
+		inventory.setItem(null);
+
+		return inventory;
 	}
 
 }

@@ -3,6 +3,10 @@ package kh.entities;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.List;
+
 
 /**
  * The persistent class for the customer database table.
@@ -35,6 +39,11 @@ public class Customer implements Serializable {
 
 	@Column(name="postal_code", nullable=false, length=10)
 	private String postalCode;
+
+	//bi-directional many-to-one association to CustomerOrder
+	@OneToMany(mappedBy="customer", fetch=FetchType.EAGER)
+	@JsonIgnore
+	private List<CustomerOrder> customerOrders;
 
 	public Customer() {
 	}
@@ -93,6 +102,28 @@ public class Customer implements Serializable {
 
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
+	}
+
+	public List<CustomerOrder> getCustomerOrders() {
+		return this.customerOrders;
+	}
+
+	public void setCustomerOrders(List<CustomerOrder> customerOrders) {
+		this.customerOrders = customerOrders;
+	}
+
+	public CustomerOrder addCustomerOrder(CustomerOrder customerOrder) {
+		getCustomerOrders().add(customerOrder);
+		customerOrder.setCustomer(this);
+
+		return customerOrder;
+	}
+
+	public CustomerOrder removeCustomerOrder(CustomerOrder customerOrder) {
+		getCustomerOrders().remove(customerOrder);
+		customerOrder.setCustomer(null);
+
+		return customerOrder;
 	}
 
 }

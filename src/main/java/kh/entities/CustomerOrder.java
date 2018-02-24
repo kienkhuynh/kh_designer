@@ -2,6 +2,7 @@ package kh.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import java.util.List;
 
 
 /**
@@ -22,8 +23,17 @@ public class CustomerOrder implements Serializable {
 	@Column(name="customer_order_code", nullable=false, length=32)
 	private String customerOrderCode;
 
-	@Column(name="item_order_id", nullable=false)
-	private Integer itemOrderId;
+	@Column(name="process_status")
+	private Boolean processStatus;
+
+	//bi-directional many-to-one association to OrderByItem
+	@OneToMany(mappedBy="customerOrder", fetch=FetchType.EAGER)
+	private List<OrderByItem> orderByItems;
+
+	//bi-directional many-to-one association to Customer
+	@ManyToOne
+	@JoinColumn(name="customer_id")
+	private Customer customer;
 
 	public CustomerOrder() {
 	}
@@ -44,12 +54,42 @@ public class CustomerOrder implements Serializable {
 		this.customerOrderCode = customerOrderCode;
 	}
 
-	public Integer getItemOrderId() {
-		return this.itemOrderId;
+	public Boolean getProcessStatus() {
+		return this.processStatus;
 	}
 
-	public void setItemOrderId(Integer itemOrderId) {
-		this.itemOrderId = itemOrderId;
+	public void setProcessStatus(Boolean processStatus) {
+		this.processStatus = processStatus;
+	}
+
+	public List<OrderByItem> getOrderByItems() {
+		return this.orderByItems;
+	}
+
+	public void setOrderByItems(List<OrderByItem> orderByItems) {
+		this.orderByItems = orderByItems;
+	}
+
+	public OrderByItem addOrderByItem(OrderByItem orderByItem) {
+		getOrderByItems().add(orderByItem);
+		orderByItem.setCustomerOrder(this);
+
+		return orderByItem;
+	}
+
+	public OrderByItem removeOrderByItem(OrderByItem orderByItem) {
+		getOrderByItems().remove(orderByItem);
+		orderByItem.setCustomerOrder(null);
+
+		return orderByItem;
+	}
+
+	public Customer getCustomer() {
+		return this.customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 }

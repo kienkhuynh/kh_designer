@@ -3,6 +3,9 @@ package kh.entities;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 /**
  * The persistent class for the inventory database table.
@@ -22,16 +25,22 @@ public class Inventory implements Serializable {
 	@Column(name="min_quantity")
 	private Integer minQuantity;
 
-	@Column(name="orignal_price", nullable=false)
-	private double orignalPrice;
+	@Column(name="original_price", nullable=false)
+	private double originalPrice;
 
 	private Integer quantity;
 
 	@Column(name="sale_price", nullable=false)
 	private double salePrice;
 
-	@Column(name="style_id", nullable=false)
-	private Integer styleId;
+	@Column(name="style_code", length=32)
+	private String styleCode;
+
+	//bi-directional many-to-one association to Item
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="item_id", nullable=false)
+	@JsonIgnore
+	private Item item;
 
 	public Inventory() {
 	}
@@ -52,12 +61,12 @@ public class Inventory implements Serializable {
 		this.minQuantity = minQuantity;
 	}
 
-	public double getOrignalPrice() {
-		return this.orignalPrice;
+	public double getOriginalPrice() {
+		return this.originalPrice;
 	}
 
-	public void setOrignalPrice(double orignalPrice) {
-		this.orignalPrice = orignalPrice;
+	public void setOriginalPrice(double originalPrice) {
+		this.originalPrice = originalPrice;
 	}
 
 	public Integer getQuantity() {
@@ -76,12 +85,20 @@ public class Inventory implements Serializable {
 		this.salePrice = salePrice;
 	}
 
-	public Integer getStyleId() {
-		return this.styleId;
+	public String getStyleCode() {
+		return this.styleCode;
 	}
 
-	public void setStyleId(Integer styleId) {
-		this.styleId = styleId;
+	public void setStyleCode(String styleCode) {
+		this.styleCode = styleCode;
+	}
+
+	public Item getItem() {
+		return this.item;
+	}
+
+	public void setItem(Item item) {
+		this.item = item;
 	}
 
 }

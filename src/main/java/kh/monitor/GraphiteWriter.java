@@ -6,38 +6,45 @@ import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 import javax.annotation.PostConstruct;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import kh.monitor.MonitorReporter.MetricKPI;
-import kh.web.core.SystemConfiguration;
+import kh.web.core.ServerConfiguration;
 
-
-@Component
+/*
+ * Queue and write monitor metrics to database
+ * 
+ * @author: kh
+ */
 public class GraphiteWriter {
 	Logger log =  Logger.getLogger(GraphiteWriter.class.getName());
 	
-	@Autowired
-	private SystemConfiguration config;
+	private ServerConfiguration config;
 	
+	/**
+	 * Metric queue
+	 */
 	private static ConcurrentLinkedQueue<String> METRIC_QUEUE;
 	
-	public GraphiteWriter() {
+	public GraphiteWriter(ServerConfiguration config) {
+		this.config = config;
 	}
 	
-	@PostConstruct
-	private void run() {
+	public void init() {
 		METRIC_QUEUE = new ConcurrentLinkedQueue<String>();
+
+		// Start up a thread that periodically process the metric queues that will open/reuse socket
+		// to write metric to the monitoring server.
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				SocketWriter sw = null;
 				while (true) {
 					String metrics = null;
+					// Limit the number of metrics to send at a time at 20.
 					int metricCount = Math.min(20, METRIC_QUEUE.size());
 					for (int i = 0; i < metricCount; i++) {
 						if (metrics == null) {
@@ -46,6 +53,7 @@ public class GraphiteWriter {
 							metrics = metrics + "\n" + METRIC_QUEUE.poll();
 						}
 					}
+					// send metrics
 					sw = sendMetrics(metrics, sw);
 					
 					try {
@@ -57,6 +65,12 @@ public class GraphiteWriter {
 		}).start();
 	}
 
+	/**
+	 * Prepares and builds the metric path to write to queue
+	 * 
+	 * @param metricKPI the kpi
+	 * @param value the metric value
+	 */
 	public void write(MetricKPI metricKPI, float value) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("test.").append(metricKPI.name().toLowerCase()).append(" ").
@@ -64,6 +78,13 @@ public class GraphiteWriter {
 		METRIC_QUEUE.add(sb.toString());
 	}
 	
+	/**
+	 * Sends metric to the monitor server either reuse of open a new socket.
+	 * 
+	 * @param metrics metric to write
+	 * @param sw the current socket connection
+	 * @return a good socket (socket still has connection for next reuse)
+	 */
 	private SocketWriter sendMetrics(String metrics, SocketWriter sw) {
 		try {
 			sw = validate(sw);
@@ -81,6 +102,12 @@ public class GraphiteWriter {
 		return null;
 	}
  
+	/**
+	 * Validates socket connection
+	 * 
+	 * @param sw the socket to be validated
+	 * @return good socket.
+	 */
 	private SocketWriter validate(SocketWriter sw) {
 		if (sw != null) {
 			Socket socket = sw.socket;
@@ -102,6 +129,12 @@ public class GraphiteWriter {
 		}
 		return null;
 	}
+	
+	/**
+	 * Destroy a bad socket connection
+	 * 
+	 * @param sw socket to be destroyed.
+	 */
 	private void destroy(SocketWriter sw) {
 		if (sw != null) {
 			try {

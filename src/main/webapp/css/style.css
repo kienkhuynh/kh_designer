@@ -23,13 +23,11 @@ a:hover {
 	height:40px;
 	text-align:center
 }
-
 .khmenu {
 	border-bottom: 2px solid #595959;
     border-bottom-left-radius: 90px;
     color: #595959;
 }
-
 .khmenu .icon {
 	position: absolute;
 	top: 0;
@@ -42,7 +40,6 @@ a:hover {
 	font-weight:bold;
 	padding:0px 20px 0px 20px;
 }
-
 .khmenu .close {
     position: absolute;
     top: 10px;
@@ -57,8 +54,11 @@ a:hover {
 }
 .rightsection a {
 	padding-top: 10px;
-	line-height: 14px;
-	font-size:12px;
+	font-size:14px;
+	font-weight: bold;
+}
+.rightsection .itemCount {
+	padding-left: 10px;
 }
 @media screen and (max-width: 600px) {
   .khmenu a { display: none;}
@@ -80,7 +80,6 @@ a:hover {
   }*/
   
 }
-
 @media screen and (max-width: 600px) {
   .khmenu.responsive {
     border:none;
@@ -108,7 +107,6 @@ a:hover {
     color: gray;
   }
 }
-
 .container .contentPane {
 	padding-top: 50px;
 	display: none;
@@ -122,11 +120,62 @@ a:hover {
     font-style: italic;
     padding: 20% 0 20% 0;
 }
-
-.container .contentPane.visible {
-	display:block;
+.container .contentPane .thumbnail .label {
+	font-size: 16px;
+    font-weight: bold;
+    text-align: center;
 }
-
+.container .contentPane .thumbnail {
+    border: 5px double lightgray;
+    padding: 10px;
+    float: left;
+    margin: 10px;
+    height: 350px;
+    min-width: 250px;
+}
+.container .contentPane .thumbnail .salePrice {
+	display: inline-block;
+    float: left;
+    font-size: 20px;
+    color: red;
+    font-weight: 900;
+}
+.container .contentPane .thumbnail .originalPrice {
+    font-weight: 800;
+    font-size: 20px;
+    float: left;
+}
+.container .contentPane .thumbnail .strikethrough {
+	text-decoration-line: line-through;
+    font-weight: 800;
+    font-size: 20px;
+    color: lightgray;
+    float: left;
+    padding-left: 20px;
+}
+.container .contentPane .thumbnail .button {
+	clear: both;
+    border-radius: 35px;
+    float: right;
+    margin-right: 20px;
+    padding: 5px 15px 5px 15px;
+    text-align: right;
+    cursor: pointer;
+    font-weight:bold;
+    border: 2px solid #595959;
+    background-color: white;
+    color: #595959;
+}
+.container .contentPane .thumbnail .button:hover {
+    border: 2px solid white;
+    background-color: #595959;
+    color: white;
+}
+.container .contentPane .thumbnail img{
+	max-width: 200px;
+    max-height: 200px;
+    display: block;
+}
 .container .contentPane.loading {
     background: url(/images/loading.gif) no-repeat 50% 35%;
     width: 100%;

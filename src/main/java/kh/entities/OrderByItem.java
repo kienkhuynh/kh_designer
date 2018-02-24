@@ -20,16 +20,18 @@ public class OrderByItem implements Serializable {
 	@Column(name="item_order_id", unique=true, nullable=false)
 	private Integer itemOrderId;
 
-	@Column(name="item_id", nullable=false)
-	private Integer itemId;
+	@Column(name="inventory_id", nullable=false)
+	private Integer inventoryId;
 
 	@Column(name="order_date", nullable=false)
 	private Timestamp orderDate;
 
 	private Integer quantity;
 
-	@Column(name="style_code", nullable=false)
-	private Integer styleCode;
+	//bi-directional many-to-one association to CustomerOrder
+	@ManyToOne
+	@JoinColumn(name="item_order_id", referencedColumnName="item_order_id", nullable=false, insertable=false, updatable=false)
+	private CustomerOrder customerOrder;
 
 	public OrderByItem() {
 	}
@@ -42,12 +44,12 @@ public class OrderByItem implements Serializable {
 		this.itemOrderId = itemOrderId;
 	}
 
-	public Integer getItemId() {
-		return this.itemId;
+	public Integer getInventoryId() {
+		return this.inventoryId;
 	}
 
-	public void setItemId(Integer itemId) {
-		this.itemId = itemId;
+	public void setInventoryId(Integer inventoryId) {
+		this.inventoryId = inventoryId;
 	}
 
 	public Timestamp getOrderDate() {
@@ -66,12 +68,12 @@ public class OrderByItem implements Serializable {
 		this.quantity = quantity;
 	}
 
-	public Integer getStyleCode() {
-		return this.styleCode;
+	public CustomerOrder getCustomerOrder() {
+		return this.customerOrder;
 	}
 
-	public void setStyleCode(Integer styleCode) {
-		this.styleCode = styleCode;
+	public void setCustomerOrder(CustomerOrder customerOrder) {
+		this.customerOrder = customerOrder;
 	}
 
 }

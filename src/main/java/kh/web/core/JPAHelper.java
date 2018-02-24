@@ -24,7 +24,7 @@ public class JPAHelper {
 	
 	private EntityManager entityMgr;
 	
-	@Autowired SystemConfiguration config;
+	@Autowired ServerConfiguration config;
 	
 	@Autowired MonitorReporter monitor;
 	

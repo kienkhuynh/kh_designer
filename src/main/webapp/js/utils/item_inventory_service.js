@@ -15,8 +15,8 @@ define(["dojo/_base/declare", "./base_service"],
 		{
 			this.inherited(arguments);
 		},
-	    get_items: function(searchKey) {
-	    	
+	    get_items: function(searchKey, callback) {
+	    	this._get(window.location.origin + "/resources/items?search=" + searchKey, callback);
 	    }
 	});
 });
