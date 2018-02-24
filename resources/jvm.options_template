@@ -1,0 +1,20 @@
+# WebSphere Application Server Liberty Profile
+# This file contains options that are passed directly to the JVM on startup
+# See the InfoCenter for full documentation
+# Uncomment the following line to set the maximum heap size to 1024m
+-Xmx1024m
+
+#DATABASE 
+-Dschema=<DATABASE>
+-DdbUser=<USER>
+-DdbPassword=<PASSWORD>
+-DdatabaseUrl=<URL>
+-Ddriver=<DRIVER>
+
+#TIMESERIES DATABASE
+-DmonitorServer=<MON_SERVER>
+-DmonitorPort=<MON_PORT>
+-Denable=false
+
+#SECURITY
+-Dsalt=<SALT_KEY>
