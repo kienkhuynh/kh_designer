@@ -30,7 +30,7 @@ public class Item implements Serializable {
 	private String skuCpu;
 
 	//bi-directional many-to-one association to Inventory
-	@OneToMany(mappedBy="item", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="item", cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
 	private List<Inventory> inventories;
 
 	public Item() {

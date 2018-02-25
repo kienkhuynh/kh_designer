@@ -41,7 +41,7 @@ public class Customer implements Serializable {
 	private String postalCode;
 
 	//bi-directional many-to-one association to CustomerOrder
-	@OneToMany(mappedBy="customer", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="customer", fetch=FetchType.LAZY)
 	@JsonIgnore
 	private List<CustomerOrder> customerOrders;
 

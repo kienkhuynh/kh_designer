@@ -26,9 +26,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 	
 	@Autowired
-	private JPAHelper jpaHelper; 
-	
-	@Autowired
 	public AuthenticationService userDetailsService() {
 		return new AuthenticationService();
 	}

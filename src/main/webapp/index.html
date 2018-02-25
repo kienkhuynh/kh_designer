@@ -33,7 +33,7 @@
 		</div>
 		<div class="rightsection">
 			<a href="#signin" class="signin">Sign in</a> |  
-			<a href="#shoppingcard" class="cart">My Bag<span class="itemCount" id="numberOfItems">(0 items)</span>
+			<a href="#shoppingcart" class="cart">My Bag<span class="itemCount" id="numberOfItems">(0 items)</span>
 			</a>
 		</div>
 	</nav>
@@ -46,7 +46,7 @@
 		<div id="men" class="contentPane">Men clothing</div>
 		<div id="kids" class="contentPane">Kids clothing</div>
 		<div id="signin" class="contentPane">signin</div>
-		<div id="shoppingcard" class="contentPane">shoppingcard</div>
+		<div id="shoppingcart" class="contentPane">shoppingcart</div>
 		<div id="loading" class="contentPane loading"></div>
 	</div>
 </body>
@@ -63,9 +63,9 @@
 </script>
 <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.13.0/dojo/dojo.js"></script>
 <script>
-require(["utils/hash_manager"], 
-	function(HashMgr) {
-		HashMgr.instance().startup();
+require(["utils/app_controller"], 
+	function(AppController) {
+		AppController.instance().startup();
 	});
 </script>
 </html>

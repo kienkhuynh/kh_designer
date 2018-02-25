@@ -1,6 +1,7 @@
 package kh.web.core;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import kh.entities.Customer;
 import kh.entities.CustomerOrder;
+import kh.entities.Inventory;
 import kh.entities.OrderByItem;
 
 /*
@@ -54,10 +56,10 @@ public class CustomerOrderManager extends AbstractManager<CustomerOrder> {
 				List<OrderByItem> currentItems = currentOrder.getOrderByItems();
 				Map<Integer, OrderByItem> orderedItemsByInventoryIdMap = new HashMap<Integer, OrderByItem>(currentItems.size());
 				for (OrderByItem orderedItem : currentItems) {
-					orderedItemsByInventoryIdMap.put(orderedItem.getInventoryId(), orderedItem);
+					orderedItemsByInventoryIdMap.put(orderedItem.getInventory().getInventoryId(), orderedItem);
 				}
 				for (OrderByItem mergedItem :  order.getOrderByItems()) {
-					OrderByItem orderedItem = orderedItemsByInventoryIdMap.get(mergedItem.getInventoryId());
+					OrderByItem orderedItem = orderedItemsByInventoryIdMap.get(mergedItem.getInventory().getInventoryId());
 					orderedItem.setQuantity(orderedItem.getQuantity() + mergedItem.getQuantity());
 				}
 				addOrUpdate(currentOrder);
@@ -94,21 +96,25 @@ public class CustomerOrderManager extends AbstractManager<CustomerOrder> {
 	 * Order the item
 	 * 
 	 * @param customerOrder the customer order that this order belongs to
-	 * @param inventoryId item to be ordered
+	 * @param inventory item to be ordered
 	 * @param quantity order quanity
 	 * @return The order item
 	 */
-	public OrderByItem createOrUpdateOrderByItem(Customer customer, CustomerOrder customerOrder, int inventoryId, int quantity) {
+	public OrderByItem createOrUpdateOrderByItem(Customer customer, CustomerOrder customerOrder, Inventory inventory, int quantity) {
 		List<OrderByItem> orderedItems = customerOrder.getOrderByItems();
 		OrderByItem orderedItem = null;
 		
 		// Looking for the same item and update the quantity.
-		for (OrderByItem item : orderedItems) {
-			if (item.getInventoryId() == inventoryId) {
-				orderedItem = item;
-				orderedItem.setQuantity(orderedItem.getQuantity() + quantity);
-				break;
+		if (orderedItems != null) {
+			for (OrderByItem item : orderedItems) {
+				if (item.getInventory().getInventoryId() == inventory.getInventoryId()) {
+					orderedItem = item;
+					orderedItem.setQuantity(orderedItem.getQuantity() + quantity);
+					break;
+				}
 			}
+		} else {
+			customerOrder.setOrderByItems(new ArrayList<OrderByItem>());
 		}
 		
 		// If none is found, create a new one.
@@ -116,7 +122,7 @@ public class CustomerOrderManager extends AbstractManager<CustomerOrder> {
 			orderedItem = new OrderByItem();
 			orderedItem.setCustomerOrder(customerOrder);
 			orderedItem.setQuantity(quantity);
-			orderedItem.setInventoryId(quantity);
+			orderedItem.setInventory(inventory);
 			orderedItem.setOrderDate(new Timestamp(System.currentTimeMillis()));
 			customerOrder.addOrderByItem(orderedItem);
 		}
@@ -125,6 +131,43 @@ public class CustomerOrderManager extends AbstractManager<CustomerOrder> {
 		if (customer != null) {
 			jpaHelper.entityMgr().persist(orderedItem);
 		}
+		return orderedItem;
+	}
+	
+	/**
+	 * Updates order quantity
+	 * 
+	 * @param customerOrder the customer order that this order belongs to
+	 * @param inventory item to be ordered
+	 * @param quantity order quanity
+	 * @return The order item
+	 */
+	public OrderByItem updateOrderQuantity(Customer customer, CustomerOrder customerOrder, Inventory inventory, int quantity) {
+		List<OrderByItem> orderedItems = customerOrder.getOrderByItems();
+		OrderByItem orderedItem = null;
+		
+		// Looking for the same item and update the quantity.
+		if (orderedItems != null) {
+			for (OrderByItem item : orderedItems) {
+				if (item.getInventory().getInventoryId() == inventory.getInventoryId()) {
+					orderedItem = item;
+					break;
+				}
+			}
+		}
+		
+		if (orderedItem != null) {
+			if (quantity == 0) {
+				customerOrder.removeOrderByItem(orderedItem);
+			} else if (quantity > 0 ) {
+				orderedItem.setQuantity(quantity);
+			}
+			if (customer != null && orderedItem.getItemOrderId() != null) {
+				jpaHelper.remove(orderedItem);
+				jpaHelper.entityMgr().persist(orderedItem);
+			}
+		}
+		
 		return orderedItem;
 	}
 	

@@ -76,6 +76,7 @@ public abstract class AbstractManager<T> {
 		try {
 			return mapper.writeValueAsString(obj);
 		} catch (JsonProcessingException e) {
+			e.printStackTrace();
 			log.error(e);
 		}
 		return null;

@@ -8,7 +8,7 @@ public class ServerConfiguration {
 	
 	Logger log = Logger.getLogger(ServerConfiguration.class);
 	
-	public final String databaseUrl, dbUser, dbPassword, schema, driver;
+	public final String databaseUrl, dbUser, dbPassword, schema, driver, salt;
 	
 	public final String monitorServer;
 	public final int monitorPort;
@@ -23,6 +23,7 @@ public class ServerConfiguration {
 		monitorServer = System.getProperty("monitorServer").trim();
 		monitorPort = Integer.parseInt(System.getProperty("monitorPort"));
 		
+		salt = System.getProperty("salt");
 		log.info("End of System configuration");
 	}
 }

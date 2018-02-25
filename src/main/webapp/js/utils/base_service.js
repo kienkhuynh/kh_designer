@@ -64,7 +64,7 @@ define(["dojo/_base/declare","dojo/request/xhr", "dojo/_base/array"],
 			}, function(evt){
 			    // Handle a progress event from the request if the
 			    // browser supports XHR2
-				console.log(evt);
+				//console.log(evt);
 			});
 		}
 	});

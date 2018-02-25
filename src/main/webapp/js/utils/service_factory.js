@@ -3,8 +3,8 @@
  * 
  * @author Kien Huynh
  */
-define(["dojo/_base/declare", "./item_inventory_service"], 
-		function(declare, InventoryService)
+define(["dojo/_base/declare", "./item_inventory_service", "./shopping_cart_service"], 
+		function(declare, InventoryService, ShoppingService)
 {
 	var ServiceFactory = declare("util.ServiceFactory", null, 
 	{
@@ -16,6 +16,12 @@ define(["dojo/_base/declare", "./item_inventory_service"],
 				this._inventory_service = new InventoryService();
 			}
 			return this._inventory_service;
+		},
+		get_shopping_service: function() {
+			if (!this._shopping_service) {
+				this._shopping_service = new ShoppingService();
+			}
+			return this._shopping_service;
 		}
 	});
 	

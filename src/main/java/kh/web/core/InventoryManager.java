@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import kh.entities.Inventory;
 import kh.entities.Item;
 
 /*
@@ -37,6 +39,24 @@ public class InventoryManager extends AbstractManager<Item> {
 		return jpaHelper.query("SELECT i FROM Item i WHERE i.searchKeywords like :searchKeywords", 
 				new String[] { "searchKeywords"},
 				new String[] { String.format("%%|%s|%%", searchKey) }, Item.class);
+	}
+	
+	/**
+	 * Find inventory
+	 * 
+	 * @param inventoryId inventory id
+	 * @return return item inventory
+	 */
+	public Inventory findByInventoryId(int inventoryId) {
+		List<Inventory> invs = jpaHelper.query("SELECT i FROM Inventory i WHERE i.inventoryId = :inventoryId",
+				new String[] {"inventoryId"},
+				new Object[] {inventoryId},
+				Inventory.class);
+		// technically there should only one found
+		if (!invs.isEmpty()) {
+			return invs.get(0);
+		}
+		return null;
 	}
 	
 	@Override

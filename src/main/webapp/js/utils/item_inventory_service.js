@@ -6,7 +6,7 @@
 define(["dojo/_base/declare", "./base_service"],
 		function(declare, BaseService)
 { 
-	return declare("utils.InventoryService", BaseService, 
+	return declare("utils.ShoppingCartService", BaseService, 
 	{
 		constructor: function() {
 			this.inherited(arguments);

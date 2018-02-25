@@ -2,6 +2,9 @@ package kh.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 
@@ -26,14 +29,15 @@ public class CustomerOrder implements Serializable {
 	@Column(name="process_status")
 	private Boolean processStatus;
 
-	//bi-directional many-to-one association to OrderByItem
-	@OneToMany(mappedBy="customerOrder", fetch=FetchType.EAGER)
-	private List<OrderByItem> orderByItems;
-
 	//bi-directional many-to-one association to Customer
 	@ManyToOne
 	@JoinColumn(name="customer_id")
+	@JsonIgnore
 	private Customer customer;
+
+	//bi-directional many-to-one association to OrderByItem
+	@OneToMany(mappedBy="customerOrder", fetch=FetchType.EAGER)
+	private List<OrderByItem> orderByItems;
 
 	public CustomerOrder() {
 	}
@@ -62,6 +66,14 @@ public class CustomerOrder implements Serializable {
 		this.processStatus = processStatus;
 	}
 
+	public Customer getCustomer() {
+		return this.customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
 	public List<OrderByItem> getOrderByItems() {
 		return this.orderByItems;
 	}
@@ -82,14 +94,6 @@ public class CustomerOrder implements Serializable {
 		orderByItem.setCustomerOrder(null);
 
 		return orderByItem;
-	}
-
-	public Customer getCustomer() {
-		return this.customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
 	}
 
 }

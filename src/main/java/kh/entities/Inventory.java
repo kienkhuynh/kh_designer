@@ -4,7 +4,8 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.util.List;
 
 
 /**
@@ -37,10 +38,15 @@ public class Inventory implements Serializable {
 	private String styleCode;
 
 	//bi-directional many-to-one association to Item
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name="item_id", nullable=false)
 	@JsonIgnore
 	private Item item;
+
+	//bi-directional many-to-one association to OrderByItem
+	@OneToMany(mappedBy="inventory", fetch=FetchType.LAZY)
+	@JsonIgnore
+	private List<OrderByItem> orderByItems;
 
 	public Inventory() {
 	}
@@ -99,6 +105,28 @@ public class Inventory implements Serializable {
 
 	public void setItem(Item item) {
 		this.item = item;
+	}
+
+	public List<OrderByItem> getOrderByItems() {
+		return this.orderByItems;
+	}
+
+	public void setOrderByItems(List<OrderByItem> orderByItems) {
+		this.orderByItems = orderByItems;
+	}
+
+	public OrderByItem addOrderByItem(OrderByItem orderByItem) {
+		getOrderByItems().add(orderByItem);
+		orderByItem.setInventory(this);
+
+		return orderByItem;
+	}
+
+	public OrderByItem removeOrderByItem(OrderByItem orderByItem) {
+		getOrderByItems().remove(orderByItem);
+		orderByItem.setInventory(null);
+
+		return orderByItem;
 	}
 
 }
