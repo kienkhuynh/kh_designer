@@ -10,7 +10,7 @@ Use the following steps to run the application locally:
 
 1. Execute full Maven build to create the `target/JavaHelloWorldApp.war` file:
     ```bash
-    $ mvn clean install
+    $ mvn install package
     ```
 2. Execute resources/create_db.sql and resources/insert_db.sql
 
