@@ -12,7 +12,7 @@ Use the following steps to run the application locally:
     ```bash
     $ mvn install package
     ```
-2. Execute resources/create_db.sql and resources/insert_db.sql
+2. Run resources/create_db.sql and resources/insert_db.sql on PostgreSQL
 
 3. Update jvm.options.templates template with proper database credentials and other properties
 
