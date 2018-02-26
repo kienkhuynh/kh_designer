@@ -5,8 +5,6 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.sql.Timestamp;
-
 
 /**
  * The persistent class for the order_by_item database table.
@@ -23,19 +21,16 @@ public class OrderByItem implements Serializable {
 	@Column(name="item_order_id", unique=true, nullable=false)
 	private Integer itemOrderId;
 
-	@Column(name="order_date", nullable=false)
-	private Timestamp orderDate;
-
 	private Integer quantity;
 
 	//bi-directional many-to-one association to CustomerOrder
-	@ManyToOne
-	@JoinColumn(name="item_order_id", referencedColumnName="item_order_id", nullable=false, insertable=false, updatable=false)
+	@ManyToOne(cascade={CascadeType.PERSIST})
+	@JoinColumn(name="customer_order_id", nullable=false)
 	@JsonIgnore
 	private CustomerOrder customerOrder;
 
-	//bi-directional many-to-one association to Inventory
-	@ManyToOne
+	//uni-directional one-to-one association to Inventory
+	@OneToOne
 	@JoinColumn(name="inventory_id", nullable=false)
 	private Inventory inventory;
 
@@ -48,14 +43,6 @@ public class OrderByItem implements Serializable {
 
 	public void setItemOrderId(Integer itemOrderId) {
 		this.itemOrderId = itemOrderId;
-	}
-
-	public Timestamp getOrderDate() {
-		return this.orderDate;
-	}
-
-	public void setOrderDate(Timestamp orderDate) {
-		this.orderDate = orderDate;
 	}
 
 	public Integer getQuantity() {

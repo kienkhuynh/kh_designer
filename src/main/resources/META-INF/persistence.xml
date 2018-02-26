@@ -5,7 +5,5 @@
 		<class>kh.entities.Inventory</class>
 		<class>kh.entities.Item</class>
 		<class>kh.entities.OrderByItem</class>
-		<class>kh.entities.Promotion</class>
-		<class>kh.entities.PurchaseOrder</class>
 	</persistence-unit>
 </persistence>

@@ -1,16 +1,12 @@
 package kh.web.core;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import kh.entities.Customer;
 import kh.entities.CustomerOrder;
 import kh.entities.Inventory;
 import kh.entities.OrderByItem;
@@ -24,11 +20,6 @@ import kh.entities.OrderByItem;
 public class CustomerOrderManager extends AbstractManager<CustomerOrder> {
 	
 	Logger log = Logger.getLogger(CustomerOrderManager.class);
-	
-	/**
-	 * Attribute used to store anonymous customer order
-	 */
-	public static String ANONYMOUS_CUSTOMER_ORDER_SESSION_ATTRIBUTE = "ANONYMOUS_CUSTOMER_ORDER_SESSION_ATTRIBUTE";
 	
 	@Autowired JPAHelper jpaHelper;
 	
@@ -64,7 +55,7 @@ public class CustomerOrderManager extends AbstractManager<CustomerOrder> {
 				}
 				addOrUpdate(currentOrder);
 			}
-			if (order.getId() != null || order.getId() > 0) {
+			if (order.getCustomerOrderId() != null || order.getCustomerOrderId() > 0) {
 				delete(order);
 			}
 		} else {
@@ -80,8 +71,8 @@ public class CustomerOrderManager extends AbstractManager<CustomerOrder> {
 	 * @return the current order.
 	 */
 	public CustomerOrder getCurrentOrder(Integer customerId) {
-		List<CustomerOrder> orders = jpaHelper.query("SELECT o FROM CustomerOrder o WHERE o.customer = :customer AND o.processStatus = :processStatus", 
-				new String[] {"customer", "processStatus"}, 
+		List<CustomerOrder> orders = jpaHelper.query("SELECT o FROM CustomerOrder o WHERE o.customerId = :customerId AND o.processStatus = :processStatus", 
+				new String[] {"customerId", "processStatus"}, 
 				new Object[] {customerId, false},
 				CustomerOrder.class);
 		
@@ -100,7 +91,7 @@ public class CustomerOrderManager extends AbstractManager<CustomerOrder> {
 	 * @param quantity order quanity
 	 * @return The order item
 	 */
-	public OrderByItem createOrUpdateOrderByItem(Customer customer, CustomerOrder customerOrder, Inventory inventory, int quantity) {
+	public OrderByItem createOrUpdateOrderByItem(Integer customerId, CustomerOrder customerOrder, Inventory inventory, int quantity) {
 		List<OrderByItem> orderedItems = customerOrder.getOrderByItems();
 		OrderByItem orderedItem = null;
 		
@@ -123,13 +114,12 @@ public class CustomerOrderManager extends AbstractManager<CustomerOrder> {
 			orderedItem.setCustomerOrder(customerOrder);
 			orderedItem.setQuantity(quantity);
 			orderedItem.setInventory(inventory);
-			orderedItem.setOrderDate(new Timestamp(System.currentTimeMillis()));
 			customerOrder.addOrderByItem(orderedItem);
 		}
 		
 		// Update the order item if the order belong to a non-anonymous customer.
-		if (customer != null) {
-			jpaHelper.entityMgr().persist(orderedItem);
+		if (customerId != null) {
+			jpaHelper().persist(customerOrder);
 		}
 		return orderedItem;
 	}
@@ -142,7 +132,7 @@ public class CustomerOrderManager extends AbstractManager<CustomerOrder> {
 	 * @param quantity order quanity
 	 * @return The order item
 	 */
-	public OrderByItem updateOrderQuantity(Customer customer, CustomerOrder customerOrder, Inventory inventory, int quantity) {
+	public OrderByItem updateOrderQuantity(Integer customerId, CustomerOrder customerOrder, Inventory inventory, int quantity) {
 		List<OrderByItem> orderedItems = customerOrder.getOrderByItems();
 		OrderByItem orderedItem = null;
 		
@@ -162,24 +152,14 @@ public class CustomerOrderManager extends AbstractManager<CustomerOrder> {
 			} else if (quantity > 0 ) {
 				orderedItem.setQuantity(quantity);
 			}
-			if (customer != null && orderedItem.getItemOrderId() != null) {
+			if (customerId != null && orderedItem.getItemOrderId() != null) {
 				jpaHelper.remove(orderedItem);
-				jpaHelper.entityMgr().persist(orderedItem);
+				jpaHelper.persist(customerOrder);
 			}
 		}
 		
 		return orderedItem;
-	}
-	
-	/**
-	 * Generate the customer order code;
-	 * 
-	 * @return order uuid.
-	 */
-	public String genCustomerOrderCode() {
-		UUID uuid = UUID.randomUUID();
-		return uuid.toString();
-	}
+	} 
 	
 	@Override
 	public JPAHelper jpaHelper() {

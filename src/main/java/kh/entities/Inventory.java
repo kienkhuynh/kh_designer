@@ -5,8 +5,6 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.List;
-
 
 /**
  * The persistent class for the inventory database table.
@@ -23,9 +21,6 @@ public class Inventory implements Serializable {
 	@Column(name="inventory_id", unique=true, nullable=false)
 	private Integer inventoryId;
 
-	@Column(name="min_quantity")
-	private Integer minQuantity;
-
 	@Column(name="original_price", nullable=false)
 	private double originalPrice;
 
@@ -34,7 +29,7 @@ public class Inventory implements Serializable {
 	@Column(name="sale_price", nullable=false)
 	private double salePrice;
 
-	@Column(name="style_code", length=32)
+	@Column(name="style_code", nullable=false, length=32)
 	private String styleCode;
 
 	//bi-directional many-to-one association to Item
@@ -42,11 +37,6 @@ public class Inventory implements Serializable {
 	@JoinColumn(name="item_id", nullable=false)
 	@JsonIgnore
 	private Item item;
-
-	//bi-directional many-to-one association to OrderByItem
-	@OneToMany(mappedBy="inventory", fetch=FetchType.LAZY)
-	@JsonIgnore
-	private List<OrderByItem> orderByItems;
 
 	public Inventory() {
 	}
@@ -57,14 +47,6 @@ public class Inventory implements Serializable {
 
 	public void setInventoryId(Integer inventoryId) {
 		this.inventoryId = inventoryId;
-	}
-
-	public Integer getMinQuantity() {
-		return this.minQuantity;
-	}
-
-	public void setMinQuantity(Integer minQuantity) {
-		this.minQuantity = minQuantity;
 	}
 
 	public double getOriginalPrice() {
@@ -105,28 +87,6 @@ public class Inventory implements Serializable {
 
 	public void setItem(Item item) {
 		this.item = item;
-	}
-
-	public List<OrderByItem> getOrderByItems() {
-		return this.orderByItems;
-	}
-
-	public void setOrderByItems(List<OrderByItem> orderByItems) {
-		this.orderByItems = orderByItems;
-	}
-
-	public OrderByItem addOrderByItem(OrderByItem orderByItem) {
-		getOrderByItems().add(orderByItem);
-		orderByItem.setInventory(this);
-
-		return orderByItem;
-	}
-
-	public OrderByItem removeOrderByItem(OrderByItem orderByItem) {
-		getOrderByItems().remove(orderByItem);
-		orderByItem.setInventory(null);
-
-		return orderByItem;
 	}
 
 }

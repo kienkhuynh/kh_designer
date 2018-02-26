@@ -8,6 +8,16 @@ define(["dojo/_base/declare","dojo/request/xhr", "dojo/_base/array"],
 		postCreate: function()
 		{
 		}, 
+		login: function(user, password, callback) {
+			data = dojo.toJson({"email": user, "password": password});
+			this._post(window.location.origin + "/resources/login/in", data, callback);
+		},
+		logout: function(user, password, callback) {
+			this._get(window.location.origin + "/resources/login/out");
+		},
+	    get_customer_info: function(callback) {
+	    	this._get(window.location.origin + "/resources/customerorders/customerInfo", callback);
+	    },
 		query: function(url, queryParameters, queryValues, callback) {
 			array.forEach(queryParameters, function(name, i) {
 				if (i == 0) {

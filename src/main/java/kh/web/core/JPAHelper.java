@@ -40,10 +40,11 @@ public class JPAHelper {
 		props.put("javax.persistence.jdbc.user", config.dbUser);
 		props.put("javax.persistence.jdbc.password", config.dbPassword);
 		props.put("javax.persistence.jdbc.url", config.databaseUrl);
-
+		
 		try {
 			entityMgr = Persistence.createEntityManagerFactory("kh.jpa", props)
 								.createEntityManager();
+			
 			log.info("JPAHelper.init: Entity Manager created.");
 			monitor.report(MetricKPI.DATABASE_STATUS, 0f);
 		} catch (Exception e) {
@@ -123,6 +124,7 @@ public class JPAHelper {
 					entityMgr.getTransaction().rollback();
 				}
 			} catch (Exception e) {
+				log.error(e);
 			}
 		}
 		return false;

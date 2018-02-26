@@ -3,6 +3,7 @@ package kh.resource;
 import java.security.Principal;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,19 +15,22 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.ibm.json.java.JSONObject;
+
 import kh.entities.Customer;
 import kh.entities.CustomerOrder;
 import kh.entities.Inventory;
 import kh.springcontext.ApplicationContextUtils;
+import kh.web.core.CustomerManager;
 import kh.web.core.CustomerOrderManager;
 import kh.web.core.InventoryManager;
+import kh.web.core.SessionAttributes;
 
 @Path("/customerorders")
 public class CustomerOrderResource {
   
-	private static String CUSTOMER_SESSION = "CUSTOMER_SESSION";
-	
-    @GET
+	@GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getCustomerOrder(@PathParam("id") int id, @Context ServletContext servletContext) {
@@ -44,54 +48,59 @@ public class CustomerOrderResource {
     @Produces({MediaType.APPLICATION_JSON})
     public Response getCustomerOrder(@Context HttpServletRequest request) {
     	CustomerOrderManager customerOrderMgr = ApplicationContextUtils.customerOrderMgr(request.getServletContext());
-    	Customer customer = getCurrentCustomer(request);
+    	Integer customerId = getCurrentCustomerId(request);
     	CustomerOrder currentOrder = null;
     	
-    	if (customer != null) {
-    		currentOrder = customerOrderMgr.getCurrentOrder(customer.getCustomerId());
+    	if (customerId != null) {
+    		currentOrder = customerOrderMgr.getCurrentOrder(customerId);
     	} else {
-    		currentOrder = (CustomerOrder) request.getServletContext().getAttribute(CustomerOrderManager.ANONYMOUS_CUSTOMER_ORDER_SESSION_ATTRIBUTE);
+    		currentOrder = getSessionAttribute(request, SessionAttributes.CUSTOMER_CURRENT_ORDER);
     	}
     	if (currentOrder == null) {
     		currentOrder = new CustomerOrder();
     		currentOrder.setProcessStatus(false);
-    		currentOrder.setCustomerOrderCode(customerOrderMgr.genCustomerOrderCode());
-    		if (customer != null) {
-    			currentOrder.setCustomer(customer);
+    		if (customerId != null) {
     			customerOrderMgr.addOrUpdate(currentOrder);
     		}
     	}
-    	request.getServletContext().setAttribute(CustomerOrderManager.ANONYMOUS_CUSTOMER_ORDER_SESSION_ATTRIBUTE, currentOrder);
+    	setSessionAttribute(request, SessionAttributes.CUSTOMER_CURRENT_ORDER, currentOrder);
     	return Response.ok(customerOrderMgr.toJsonString(currentOrder), MediaType.APPLICATION_JSON).build();
     }
 
     @GET
-    @Path("/count")
+    @Path("/customerInfo")
     @Produces(MediaType.TEXT_HTML)
-    public Response getNumberOfItemsInCart(@Context HttpServletRequest request) {
+    public Response getCustomerInfo(@Context HttpServletRequest request) {
     	CustomerOrderManager customerOrderMgr = ApplicationContextUtils.customerOrderMgr(request.getServletContext());
-    	Customer customer = getCurrentCustomer(request);
+    	Integer customerId = getCurrentCustomerId(request);
     	
     	// Retrieve the current customer order.
     	CustomerOrder currentOrder;
-    	if (customer != null) {
-    		currentOrder = customerOrderMgr.getCurrentOrder(customer.getCustomerId());
+    	if (customerId != null) {
+    		currentOrder = customerOrderMgr.getCurrentOrder(customerId);
         	if (currentOrder == null) {
         		currentOrder = new CustomerOrder();
-        		currentOrder.setCustomer(customer);
+        		currentOrder.setCustomerId(customerId);
+        		currentOrder.setProcessStatus(false);
+        		customerOrderMgr.addOrUpdate(currentOrder);
         	}
     	} else {
-    		currentOrder = (CustomerOrder) request.getServletContext().getAttribute(CustomerOrderManager.ANONYMOUS_CUSTOMER_ORDER_SESSION_ATTRIBUTE);
+    		currentOrder = (CustomerOrder) request.getSession(true).getAttribute(SessionAttributes.CUSTOMER_CURRENT_ORDER);
     		if (currentOrder == null) {
     			currentOrder = new CustomerOrder();
-        		currentOrder.setCustomerOrderCode(customerOrderMgr.genCustomerOrderCode());
     		}
     	}
+    	JSONObject data = new JSONObject();
     	if (currentOrder.getOrderByItems() != null) {
-    		return Response.ok(String.valueOf(currentOrder.getOrderByItems().size()), MediaType.TEXT_HTML_TYPE).build();
-    	} else {
-    		return Response.ok("0", MediaType.TEXT_HTML_TYPE).build();
+    		data.put("items", currentOrder.getOrderByItems().size());
+    		if (customerId != null) {
+    			CustomerManager customerMgr = ApplicationContextUtils.customerMgr(request.getServletContext());
+    			Customer customer = customerMgr.find(customerId);
+    			data.put("customerId", customerId);
+    			data.put("customerName", customer.getFullName());
+    		}
     	}
+    	return Response.ok(data, MediaType.APPLICATION_JSON_TYPE).build();
     }
     
     @POST
@@ -100,29 +109,29 @@ public class CustomerOrderResource {
     public Response updateCustomerOrder(@PathParam("inventory_id") int inventoryId, @QueryParam("quantity") int quantity, @Context HttpServletRequest request) {
     	CustomerOrderManager customerOrderMgr = ApplicationContextUtils.customerOrderMgr(request.getServletContext());
     	InventoryManager inventoryMgr = ApplicationContextUtils.inventoryMgr(request.getServletContext());
-    	Customer customer = getCurrentCustomer(request);
+    	Integer customerId = getCurrentCustomerId(request);
     	
     	// Retrieve the current customer order.
     	CustomerOrder currentOrder;
-    	if (customer != null) {
-    		currentOrder = customerOrderMgr.getCurrentOrder(customer.getCustomerId());
+    	if (customerId != null) {
+    		currentOrder = customerOrderMgr.getCurrentOrder(customerId);
         	if (currentOrder == null) {
         		currentOrder = new CustomerOrder();
-        		currentOrder.setCustomer(customer);
+        		currentOrder.setCustomerId(customerId);
+        		customerOrderMgr.addOrUpdate(currentOrder);
         	}
     	} else {
-    		currentOrder = (CustomerOrder) request.getServletContext().getAttribute(CustomerOrderManager.ANONYMOUS_CUSTOMER_ORDER_SESSION_ATTRIBUTE);
+    		currentOrder = getSessionAttribute(request, SessionAttributes.CUSTOMER_CURRENT_ORDER);
     		if (currentOrder == null) {
     			currentOrder = new CustomerOrder();
-        		currentOrder.setCustomerOrderCode(customerOrderMgr.genCustomerOrderCode());
     		}
     	}
     	
     	// Update or create the item to be ordered.
     	Inventory inventory = inventoryMgr.findByInventoryId(inventoryId);
     	if (inventory != null) {
-        	customerOrderMgr.createOrUpdateOrderByItem(customer, currentOrder, inventory, quantity == 0 ? 1 : quantity);
-        	request.getServletContext().setAttribute(CustomerOrderManager.ANONYMOUS_CUSTOMER_ORDER_SESSION_ATTRIBUTE, currentOrder);
+        	customerOrderMgr.createOrUpdateOrderByItem(customerId, currentOrder, inventory, quantity == 0 ? 1 : quantity);
+        	setSessionAttribute(request, SessionAttributes.CUSTOMER_CURRENT_ORDER, currentOrder);
         	return Response.ok(customerOrderMgr.toJsonString(currentOrder), MediaType.APPLICATION_JSON).build();
     	} else {
     		return Response.status(Response.Status.NOT_FOUND).entity(String.format("Inventory %d no longer exists", inventoryId)).build();
@@ -135,33 +144,84 @@ public class CustomerOrderResource {
     public Response updateOrderedItemQuantity(@PathParam("inventory_id") int inventoryId, @QueryParam("quantity") int quantity, @Context HttpServletRequest request) {
     	CustomerOrderManager customerOrderMgr = ApplicationContextUtils.customerOrderMgr(request.getServletContext());
     	InventoryManager inventoryMgr = ApplicationContextUtils.inventoryMgr(request.getServletContext());
-    	Customer customer = getCurrentCustomer(request);
+    	Integer customerId = getCurrentCustomerId(request);
     	
     	// Retrieve the current customer order.
     	CustomerOrder currentOrder;
-    	if (customer != null) {
-    		currentOrder = customerOrderMgr.getCurrentOrder(customer.getCustomerId());
+    	if (customerId != null) {
+    		currentOrder = customerOrderMgr.getCurrentOrder(customerId);
     	} else {
-    		currentOrder = (CustomerOrder) request.getServletContext().getAttribute(CustomerOrderManager.ANONYMOUS_CUSTOMER_ORDER_SESSION_ATTRIBUTE);
+    		currentOrder = getSessionAttribute(request, SessionAttributes.CUSTOMER_CURRENT_ORDER);
     	}
     	
     	if (currentOrder != null) {
         	// Update or create the item to be ordered.
         	Inventory inventory = inventoryMgr.findByInventoryId(inventoryId);
         	if (inventory != null) {
-                customerOrderMgr.updateOrderQuantity(customer, currentOrder, inventory, quantity);
-            	request.getServletContext().setAttribute(CustomerOrderManager.ANONYMOUS_CUSTOMER_ORDER_SESSION_ATTRIBUTE, currentOrder);
+                customerOrderMgr.updateOrderQuantity(customerId, currentOrder, inventory, quantity);
+                setSessionAttribute(request, SessionAttributes.CUSTOMER_CURRENT_ORDER, currentOrder);
         	}
     	}
     	return Response.ok().build();
     }
     
-    private Customer getCurrentCustomer(HttpServletRequest request) {
+    @POST
+    @Path("/{id}/submit")
+    @Consumes({ MediaType.APPLICATION_JSON})
+    public Response submitOrder(@PathParam("id") int customerOrderId, @Context HttpServletRequest request) {
+    	CustomerOrderManager customerOrderMgr = ApplicationContextUtils.customerOrderMgr(request.getServletContext());
+    	Integer customerId = getCurrentCustomerId(request);
+    	
+    	if (customerId != null) {
+    		CustomerOrder currentOrder = customerOrderMgr.find(customerOrderId);
+	    	if (currentOrder != null 
+	    			&& currentOrder.getProcessStatus() != null && !currentOrder.getProcessStatus()
+	    			&& customerId == currentOrder.getCustomerId()) {
+	    		currentOrder.setProcessStatus(true);
+	    		customerOrderMgr.addOrUpdate(currentOrder);
+	    	}
+    	}
+    	// should throw error for unexpected case
+    	return Response.ok().build();
+    }
+    @POST
+    @Path("/submit")
+    @Consumes({ MediaType.APPLICATION_JSON})
+    public Response submitCurrentOrder(@Context HttpServletRequest request) {
+    	CustomerOrderManager customerOrderMgr = ApplicationContextUtils.customerOrderMgr(request.getServletContext());
+    	Integer customerId = getCurrentCustomerId(request);
+    	
+    	if (customerId != null) {
+    		CustomerOrder currentOrder = customerOrderMgr.getCurrentOrder(customerId);
+	    	if (currentOrder != null && currentOrder.getProcessStatus() != null && !currentOrder.getProcessStatus()) {
+	    		currentOrder.setProcessStatus(true);
+	    		customerOrderMgr.addOrUpdate(currentOrder);
+	    	}
+    	}
+    	// should throw error for unexpected case
+    	return Response.ok().build();
+    }
+    private Integer getCurrentCustomerId(HttpServletRequest request) {
     	Principal loggedInUser = request.getUserPrincipal();
     	if (loggedInUser == null) {
     		return null;
     	} else {
-    		return (Customer) request.getServletContext().getAttribute(CUSTOMER_SESSION);
+    		return (Integer) request.getSession(true).getAttribute(SessionAttributes.CUSTOMER_ID);
     	}
+    }
+    
+    private <T> T getSessionAttribute(HttpServletRequest request, String attr) {
+    	HttpSession session = request.getSession();
+    	if (session != null) {
+    		return (T) session.getAttribute(attr);
+    	}
+    	return null;
+    }
+    private void setSessionAttribute(HttpServletRequest request, String attr, Object value) {
+    	HttpSession session = request.getSession();
+    	if (session == null) {
+    		session = request.getSession(true);
+    	}
+    	session.setAttribute(attr, value);
     }
 }

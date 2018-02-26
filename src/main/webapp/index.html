@@ -6,7 +6,9 @@
 <title>𝓚𝓗 𝓓𝓮𝓼𝓲𝓰𝓷𝓮𝓻</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <script type="text/javascript" src="./js/utils/dom_utils.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
@@ -31,10 +33,11 @@
 			</div>
 			<a href="javascript:void(0);" class="icon" onclick="respond()">&#9776;</a>
 		</div>
-		<div class="rightsection">
-			<a href="#signin" class="signin">Sign in</a> |  
-			<a href="#shoppingcart" class="cart">My Bag<span class="itemCount" id="numberOfItems">(0 items)</span>
-			</a>
+		<div id="userInfo" class="userInfo out">
+			<span id="user" class="signout">User name</span>
+			<a href="#signout" class="signout">Sign out</a> 
+			<a href="#signin" class="signin">Sign in</a> | 
+			<a href="#shoppingcart" class="cart">My Bag<span class="itemCount" id="numberOfItems">(0 items)</span></a>
 		</div>
 	</nav>
 	<sidenav>
@@ -45,8 +48,37 @@
 		<div id="women" class="contentPane">Women clothing</div>
 		<div id="men" class="contentPane">Men clothing</div>
 		<div id="kids" class="contentPane">Kids clothing</div>
-		<div id="signin" class="contentPane">signin</div>
-		<div id="shoppingcart" class="contentPane">shoppingcart</div>
+		<div id="signin" class="contentPane">
+			<div class="loginContent">
+				<label>Enter email and password:</label>
+				<input id="email" name="email" type="text"></input>
+				<input id="password" name="password" type="password"></input>
+				<input id="loginBtn" name="submit" type="submit"></input>
+				<div style="color:red;font-style:ilatic;display:none" id="errorMsg">Bad credentials</div>
+			</div>
+		</div>
+		<div id="shoppingcart" class="contentPane">
+		 	<button id="submitOrderBtn" type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" style="display:none">Submit Order</button>
+			<!-- Modal -->
+			<div id="myModal" class="modal fade" role="dialog">
+			  <div class="modal-dialog">
+			    <!-- Modal content-->
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h4 class="modal-title">Submit Order</h4>
+			        <button type="button" class="close" data-dismiss="modal">&times;</button>
+			      </div>
+			      <div class="modal-body">
+			        <p>Would you like to submit your order?.</p>
+			      </div>
+			      <div class="modal-footer">
+			        <button id="submitOrder" type="submitOrder" class="btn btn-default" data-dismiss="modal">Submit</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			<div id="myCart" ></div>
+		</div>
 		<div id="loading" class="contentPane loading"></div>
 	</div>
 </body>

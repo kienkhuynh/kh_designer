@@ -17,6 +17,9 @@
         <tcpOptions soReuseAddr="true"/>
     </httpEndpoint>
 
+	<applicationMonitor updateTrigger="mbean"/>
+
     <application name="JavaHelloWorldApp" context-root="/" location="${appLocation}" type="war"/>
+	<keyStore id="defaultKeyStore" password="{xor}KzosdfsfKw=="/>
 
 </server>

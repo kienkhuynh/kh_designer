@@ -2,9 +2,6 @@ package kh.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.List;
 
 
@@ -20,42 +17,36 @@ public class CustomerOrder implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(unique=true, nullable=false)
-	private Integer id;
+	@Column(name="customer_order_id", unique=true, nullable=false)
+	private Integer customerOrderId;
 
-	@Column(name="customer_order_code", nullable=false, length=32)
-	private String customerOrderCode;
+	@Column(name="customer_id")
+	private Integer customerId;
 
 	@Column(name="process_status")
 	private Boolean processStatus;
 
-	//bi-directional many-to-one association to Customer
-	@ManyToOne
-	@JoinColumn(name="customer_id")
-	@JsonIgnore
-	private Customer customer;
-
 	//bi-directional many-to-one association to OrderByItem
-	@OneToMany(mappedBy="customerOrder", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="customerOrder", cascade={CascadeType.PERSIST}, fetch=FetchType.EAGER)
 	private List<OrderByItem> orderByItems;
 
 	public CustomerOrder() {
 	}
 
-	public Integer getId() {
-		return this.id;
+	public Integer getCustomerOrderId() {
+		return this.customerOrderId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setCustomerOrderId(Integer customerOrderId) {
+		this.customerOrderId = customerOrderId;
 	}
 
-	public String getCustomerOrderCode() {
-		return this.customerOrderCode;
+	public Integer getCustomerId() {
+		return this.customerId;
 	}
 
-	public void setCustomerOrderCode(String customerOrderCode) {
-		this.customerOrderCode = customerOrderCode;
+	public void setCustomerId(Integer customerId) {
+		this.customerId = customerId;
 	}
 
 	public Boolean getProcessStatus() {
@@ -64,14 +55,6 @@ public class CustomerOrder implements Serializable {
 
 	public void setProcessStatus(Boolean processStatus) {
 		this.processStatus = processStatus;
-	}
-
-	public Customer getCustomer() {
-		return this.customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
 	}
 
 	public List<OrderByItem> getOrderByItems() {

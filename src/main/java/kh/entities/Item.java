@@ -26,11 +26,8 @@ public class Item implements Serializable {
 	@Column(name="search_keywords", nullable=false, length=128)
 	private String searchKeywords;
 
-	@Column(name="sku_cpu", nullable=false, length=32)
-	private String skuCpu;
-
 	//bi-directional many-to-one association to Inventory
-	@OneToMany(mappedBy="item", cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="item", fetch=FetchType.EAGER)
 	private List<Inventory> inventories;
 
 	public Item() {
@@ -58,14 +55,6 @@ public class Item implements Serializable {
 
 	public void setSearchKeywords(String searchKeywords) {
 		this.searchKeywords = searchKeywords;
-	}
-
-	public String getSkuCpu() {
-		return this.skuCpu;
-	}
-
-	public void setSkuCpu(String skuCpu) {
-		this.skuCpu = skuCpu;
 	}
 
 	public List<Inventory> getInventories() {

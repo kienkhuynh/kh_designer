@@ -25,7 +25,6 @@
 		</license>
 	</licenses>
 
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -138,11 +137,15 @@
 			<version>1.1</version>
 		</dependency>
 		<dependency>
+		    <groupId>org.eclipse.persistence</groupId>
+		    <artifactId>eclipselink</artifactId>
+		    <version>2.5.0</version>
+		</dependency>
+		<!--  <dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>javax.persistence-api</artifactId>
-			<version>2.2</version>
-			<!-- <scope>provided</scope> -->
-		</dependency>
+			<version>2.2</version> 
+		</dependency>-->
 		<dependency>
 		    <groupId>javax.ws.rs</groupId>
 		    <artifactId>javax.ws.rs-api</artifactId>
@@ -163,6 +166,48 @@
 		    <groupId>org.glassfish.jersey.ext</groupId>
 		    <artifactId>jersey-spring3</artifactId>
 		    <version>2.25</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.junit.jupiter</groupId>
+		    <artifactId>junit-jupiter-api</artifactId>
+		    <version>5.0.1</version>
+		    <scope>test</scope>
+		</dependency>
+		    <dependency>
+		    <groupId>org.junit.jupiter</groupId>
+		    <artifactId>junit-jupiter-engine</artifactId>
+		    <version>5.0.1</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.junit.vintage</groupId>
+		    <artifactId>junit-vintage-engine</artifactId>
+		    <version>4.12.1</version>
+		    <scope>test</scope>
+		    </dependency>
+		<dependency>
+		    <groupId>org.junit.platform</groupId>
+		    <artifactId>junit-platform-launcher</artifactId>
+		    <version>1.0.1</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.junit.platform</groupId>
+		    <artifactId>junit-platform-runner</artifactId>
+		    <version>1.0.1</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>com.ibm.websphere.appserver.api</groupId>
+		    <artifactId>com.ibm.websphere.appserver.api.json</artifactId>
+		    <version>1.0</version>
+		    <scope>provided</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-test</artifactId>
+		    <scope>test</scope>
+		    <version>1.5.3.RELEASE</version>
 		</dependency>
 	</dependencies>
 
@@ -206,10 +251,58 @@
 					</features>
 				</configuration>
 			</plugin>
-
-
-
+			
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <version>2.19.1</version>
+			    <configuration>
+			    	<classesDirectory>target/classes</classesDirectory>
+			    	<includes>**/*Test.java</includes>
+                    <systemProperties>
+                        <property>
+                            <name>schema</name>
+                            <value>public</value>
+                        </property>
+                        <property>
+                            <name>dbUser</name>
+                            <value>kien</value>
+                        </property>
+                        <property>
+                            <name>dbPassword</name>
+                            <value>kien</value>
+                        </property>
+                        <property>
+                            <name>databaseUrl</name>
+                            <value>jdbc:postgresql://localhost:5432/test</value>
+                        </property>
+                        <property>
+                            <name>monitorServer</name>
+                            <value>127.0.0.1</value>
+                        </property>
+                        <property>
+                            <name>monitorPort</name>
+                            <value>2300</value>
+                        </property>
+                        <property>
+                            <name>salt</name>
+                            <value>test-key</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+			    <dependencies>
+			        <dependency>
+			            <groupId>org.junit.platform</groupId>
+			            <artifactId>junit-platform-surefire-provider</artifactId>
+			            <version>1.0.1</version>
+			        </dependency>
+			        <dependency>
+			            <groupId>org.junit.jupiter</groupId>
+			            <artifactId>junit-jupiter-engine</artifactId>
+			            <version>5.0.1</version>
+			        </dependency>
+			    </dependencies>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>

@@ -8,8 +8,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import kh.web.core.JPAHelper;
-
 /**
  * Configuration for security/authentication manager
  * 
@@ -25,9 +23,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		log.info(this.getClass() + " instantiated.");
 	}
 	
+	@Autowired AuthenticationService authenticationService;
+	
 	@Autowired
 	public AuthenticationService userDetailsService() {
-		return new AuthenticationService();
+		return authenticationService;
 	}
 	
 	

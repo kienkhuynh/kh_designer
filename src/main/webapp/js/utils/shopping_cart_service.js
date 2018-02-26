@@ -21,9 +21,6 @@ define(["dojo/_base/declare", "./base_service"],
 	    add_order: function(inventoryId, callback) {
 	    	this._post(window.location.origin + "/resources/customerorders/order/" + inventoryId, null, callback);
 	    },
-	    get_cart_item_count: function(callback) {
-	    	this._get(window.location.origin + "/resources/customerorders/count", callback);
-	    },
 	    update_item_quantity(inventoryId, quantity, callback) {
 	    	this._put(window.location.origin + "/resources/customerorders/order/" + inventoryId + "?quantity=" + quantity, null, callback);
 	    }

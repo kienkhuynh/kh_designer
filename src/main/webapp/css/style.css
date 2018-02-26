@@ -48,18 +48,6 @@ a:hover {
     margin-left: 50px;
     display:none
 }
-.rightsection {
-	position: absolute;
-	right: 10px;
-}
-.rightsection a {
-	padding-top: 10px;
-	font-size:14px;
-	font-weight: bold;
-}
-.rightsection .itemCount {
-	padding-left: 10px;
-}
 @media screen and (max-width: 600px) {
   .khmenu a { display: none;}
   .khmenu a.icon {
@@ -224,4 +212,39 @@ a:hover {
 	border: 2px solid white;
     background-color: #595959;
     color: white;
+}
+.container .loginContent label {
+	font-size: 18px;
+    clear: both;
+    display: block;
+    font-weight: bold;
+}
+.container .loginContent input {
+    font-size: 14px;
+    clear: both;
+    display: block;
+    font-weight: bold;
+    margin: 20px 0px;
+    width: 500px;
+    border: 2px solid lightgray;
+    padding: 5px;
+}
+
+.userInfo {
+	position: absolute;
+	right: 10px;
+}
+.userInfo a {
+	padding-top: 10px;
+	font-size:14px;
+	font-weight: bold;
+}
+.userInfo .itemCount {
+	padding-left: 10px;
+}
+.userInfo.out .signout, .userInfo.in .signin {
+	display: none;
+}
+.userInfo.in .signout, .userInfo.out .signin {
+	display: inline-block;
 }

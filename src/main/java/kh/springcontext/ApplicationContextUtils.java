@@ -3,6 +3,8 @@ package kh.springcontext;
 import javax.servlet.ServletContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import kh.web.core.CustomerManager;
 import kh.web.core.CustomerOrderManager;
 import kh.web.core.InventoryManager;
 
@@ -32,7 +34,15 @@ public class ApplicationContextUtils {
 	public static InventoryManager inventoryMgr(ServletContext servletContext) {
 		return bean(servletContext, InventoryManager.class);
 	}
-	
+	/**
+	 * Retrieves Customer Manager bean
+	 * 
+	 * @param servletContext The servlet context
+	 * @return The customer manager
+	 */
+	public static CustomerManager customerMgr(ServletContext servletContext) {
+		return bean(servletContext, CustomerManager.class);
+	}
 	/**
 	 * Retrieves Customer Order Manager for customer shopping carts management
 	 * 
@@ -54,4 +64,5 @@ public class ApplicationContextUtils {
 		WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 		return ctx.getBean(clazz);
 	}
+
 }

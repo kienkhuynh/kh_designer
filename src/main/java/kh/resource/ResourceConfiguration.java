@@ -22,6 +22,7 @@ public class ResourceConfiguration extends Application {
         return new HashSet<Class<?>>(
           Arrays.asList(
             ItemResource.class,
-            CustomerOrderResource.class));
+            CustomerOrderResource.class,
+            LoginResource.class));
     }
 }

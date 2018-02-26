@@ -31,13 +31,32 @@ public class CustomerManager extends AbstractManager<Customer> {
 	 * @return customer
 	 */
 	public Customer findByEmail(String email) {
-		List<Customer> customers = jpaHelper.query("SELECT c FROM Customer c WHERE email = :email" , 
+		List<Customer> customers = jpaHelper.query("SELECT c FROM Customer c WHERE c.email = :email" , 
 				new String[] {"email"}, 
 				new String[] {email},
 				Customer.class);
 		// Tehcnically there should only zero or one customer found
 		if (!customers.isEmpty()) {
 			return customers.get(0);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Returns the customer id 
+	 * 
+	 * @param email customer email
+	 * @return customer id
+	 */
+	public Integer findCustomerIdByEmail(String email) {
+		List<Integer> customerIds = jpaHelper.query("SELECT c.customerId FROM Customer c WHERE c.email = :email" , 
+				new String[] {"email"}, 
+				new String[] {email},
+				Integer.class);
+		// Tehcnically there should only zero or one customer found
+		if (!customerIds.isEmpty()) {
+			return customerIds.get(0);
 		} else {
 			return null;
 		}

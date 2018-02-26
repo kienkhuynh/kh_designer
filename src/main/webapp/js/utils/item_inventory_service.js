@@ -17,6 +17,9 @@ define(["dojo/_base/declare", "./base_service"],
 		},
 	    get_items: function(searchKey, callback) {
 	    	this._get(window.location.origin + "/resources/items?search=" + searchKey, callback);
+	    },
+	    submit_order: function(callback) {
+	    	this._post(window.location.origin + "/resources/customerorders/submit", null, callback);
 	    }
 	});
 });

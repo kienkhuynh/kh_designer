@@ -1,29 +1,18 @@
 package kh.springcontext;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-
-import com.sun.security.auth.UserPrincipal;
 
 import kh.entities.Customer;
 import kh.web.core.CustomerManager;
@@ -31,8 +20,6 @@ import kh.web.core.CustomerManager;
 @Component
 public class AuthenticationService implements UserDetailsService {
   
-	private static String CUSTOM_INFO = "CUSTOM_INFO";
-
 	@Autowired CustomerManager customerManager;
 	
 	public AuthenticationService() {
@@ -73,6 +60,7 @@ public class AuthenticationService implements UserDetailsService {
 		private Collection<? extends GrantedAuthority> authories;
 		
 		KHUserDetails(Customer customer) {
+			this.customer = customer;
 			 this.authories = Collections.singleton(new GrantedAuthority() {
 				@Override
 				public String getAuthority() {
@@ -104,12 +92,12 @@ public class AuthenticationService implements UserDetailsService {
 
 		@Override
 		public boolean isAccountNonLocked() {
-			return false;
+			return true;
 		}
 
 		@Override
 		public boolean isCredentialsNonExpired() {
-			return false;
+			return true;
 		}
 
 		@Override
