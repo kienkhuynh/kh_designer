@@ -6,10 +6,8 @@ CREATE TABLE customer
     customer_id serial NOT NULL PRIMARY KEY,
     email varchar(128) NOT NULL,
     full_name varchar(128) NOT NULL,
-    full_address varchar(128) NOT NULL,
-    postal_code varchar(10) NOT NULL,
-    gender integer,
-    password varchar(128)
+    password varchar(128),
+    CONSTRAINT unique_email UNIQUE (email)
 )
 ;
 -- Item table stores information about a merchandise
@@ -18,8 +16,7 @@ CREATE TABLE item
 (
     item_id serial NOT NULL PRIMARY KEY,
     name varchar(128) NOT NULL,
-    search_keywords varchar(128) NOT NULL,
-    sku_cpu varchar(32) NOT NULL
+    search_keywords varchar(128) NOT NULL
 )
 ;
 -- Mechandise inventories: available unit, mix_quantity before restocking, original price vs sale price
@@ -28,67 +25,46 @@ CREATE TABLE inventory
 (
     inventory_id serial NOT NULL PRIMARY KEY,
     quantity integer,
-    min_quantity integer,
-    style_id integer NOT NULL,
+    style_code varchar(32) NOT NULL,
     item_id integer NOT NULL,
-    orignal_price double precision NOT NULL,
-    sale_price double precision NOT NULL
-)
-;
--- Promotion codes and percentage
--- Only for demonstration purpose 
-CREATE TABLE promotion
-(
-    promotion_id serial NOT NULL PRIMARY KEY,
-    code varchar(32) NOT NULL,
-    percentage double precision NOT NULL
-)
-;
--- Mechandise ordered item quantity
--- Only for demonstration purpose 
-CREATE TABLE order_by_item
-(
-    item_order_id serial NOT NULL PRIMARY KEY,
-    item_id integer NOT NULL,
-    style_code integer NOT NULL,
-    quantity integer,
-    order_date timestamp without time zone NOT NULL,
+    original_price double precision NOT NULL,
+    sale_price double precision NOT NULL,
     CONSTRAINT item_id_fkey FOREIGN KEY (item_id)
-        REFERENCES item (item_id) MATCH SIMPLE
+        REFERENCES public.item (item_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
         ON DELETE NO ACTION
 )
+
 ;
 -- List of items order by a customer in one order
 -- Only for demonstration purpose 
 CREATE TABLE customer_order
 (
-    id serial NOT NULL PRIMARY KEY,
-    customer_order_code varchar(32) NOT NULL,
-    item_order_id integer NOT NULL,
-    customer_id integer,
+    customer_order_id serial NOT NULL PRIMARY KEY,
+    customer_id integer NOT NULL,
+    process_status boolean,
     CONSTRAINT customer_id_fkey FOREIGN KEY (customer_id)
         REFERENCES customer (customer_id) MATCH SIMPLE
         ON UPDATE NO ACTION
-        ON DELETE CASCADE,
-    CONSTRAINT item_order_id FOREIGN KEY (item_order_id)
-        REFERENCES order_by_item (item_order_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE CASCADE
-)
+        ON DELETE NO ACTION
+) 
 ;
--- Customer purchase order
--- Only for demonstration purpose 
-CREATE TABLE purchase_order
-(
-    purchase_id serial NOT NULL PRIMARY KEY,
-    customer_order_code varchar(32) NOT NULL,
-    sub_total double precision NOT NULL,
-    total double precision NOT NULL,
-    promotion_id integer,
-    CONSTRAINT promotion_id FOREIGN KEY (promotion_id)
-        REFERENCES promotion (promotion_id) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE SET NULL
-)
 
+-- Mechandise ordered item quantity
+-- Only for demonstration purpose 
+CREATE TABLE order_by_item
+(
+    item_order_id serial NOT NULL PRIMARY KEY,
+    inventory_id integer NOT NULL,
+    customer_order_id integer NOT NULL,
+    quantity integer,
+    CONSTRAINT inventory_id_fkey FOREIGN KEY (inventory_id)
+        REFERENCES public.inventory (inventory_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+     CONSTRAINT customer_order_id_fkey FOREIGN KEY (customer_order_id)
+        REFERENCES customer_order (customer_order_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
 	
