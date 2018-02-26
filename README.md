@@ -1,4 +1,4 @@
-# Consumption Sample App
+# Sample App
 
 This project contains a simple servlet application. Use at your own risk.
 
